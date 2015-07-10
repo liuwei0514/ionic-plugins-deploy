@@ -1,29 +1,20 @@
 var IonicDeploy = {
-  init: function(app_id, success, failure) {
-    cordova.exec(
-      success,
-      failure,
-      'IonicDeploy',
-      'initialize',
-      [app_id]
-    );
-  },
-  check: function(app_id, success, failure) {
+  check: function(app_id, domain, success, failure) {
     cordova.exec(
       success,
       failure,
       'IonicDeploy',
       'check',
-      [app_id]
+      [app_id,domain]
     );
   },
-  download: function(app_id, success, failure) {
+  download: function(app_id, url, success, failure) {
   	cordova.exec(
   		success,
   		failure,
   		'IonicDeploy',
   		'download',
-  		[app_id]
+  		[app_id, url]
   	);
   },
   extract: function(app_id, success,failure) {
@@ -35,13 +26,13 @@ var IonicDeploy = {
       [app_id]
     );
   },
-  redirect: function(app_id, success, failure) {
+  redirect: function(app_id,domain, success, failure) {
   	cordova.exec(
   		success,
   		failure,
   		'IonicDeploy',
   		'redirect',
-  		[app_id]
+  		[app_id, domain]
   	);
   }
 }
