@@ -88,6 +88,7 @@ public class IonicDeploy extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
         this.app_id = args.getString(0);
+		this.server = args.getString(1);
         this.prefs = getPreferences();
 
         initApp(args.getString(0));
@@ -189,7 +190,7 @@ public class IonicDeploy extends CordovaPlugin {
                 JsonHttpResponse response = httpRequest(endpoint);
 
                 if (response.json != null) {
-                    String url = response.json.getString("download_url");
+                    String url = server + response.json.getString("download_url");
 
                     final DownloadTask downloadTask = new DownloadTask(this.myContext, callbackContext);
 
