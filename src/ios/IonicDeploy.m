@@ -13,6 +13,7 @@
 @property int progress;
 @property NSString *callbackId;
 @property NSString *appId;
+@property NSString *server;
 @property NSString *channel_tag;
 @property NSDictionary *last_update;
 @property Boolean ignore_deploy; 
@@ -106,6 +107,7 @@ typedef struct JsonHttpResponse {
 - (void) check:(CDVInvokedUrlCommand *)command {
     self.appId = [command.arguments objectAtIndex:0];
     self.channel_tag = [command.arguments objectAtIndex:1];
+    self.server = [command.arguments objectAtIndex:2];
 
     if([self.appId isEqual: @"YOUR_APP_ID"]) {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Please set your app id in app.js for YOUR_APP_ID before using $ionicDeploy"] callbackId:command.callbackId];
@@ -167,6 +169,7 @@ typedef struct JsonHttpResponse {
 
 - (void) download:(CDVInvokedUrlCommand *)command {
     self.appId = [command.arguments objectAtIndex:0];
+    self.server = [command.arguments objectAtIndex:1];
 
     dispatch_async(self.serialQueue, ^{
         // Save this to a property so we can have the download progress delegate thing send
@@ -190,7 +193,7 @@ typedef struct JsonHttpResponse {
         } else {
             NSDictionary *result = self.last_update;
             NSDictionary *update = [result objectForKey:@"update"];
-            NSString *download_url = [update objectForKey:@"url"];
+            NSString *download_url = [NSString stringWithFormat:@"%@%@", self.server, [update objectForKey:@"url"]];
 
             NSLog(@"update is: %@", update);
             NSLog(@"download url is: %@", download_url);
@@ -297,9 +300,9 @@ typedef struct JsonHttpResponse {
 }
 
 - (struct JsonHttpResponse) postDeviceDetails {
-    NSString *baseUrl = @"https://apps.ionic.io";
-    NSString *endpoint = [NSString stringWithFormat:@"/api/v1/apps/%@/updates/check/", self.appId];
-    NSString *url = [NSString stringWithFormat:@"%@%@", baseUrl, endpoint];
+    //NSString *baseUrl = @"https://apps.ionic.io";
+    NSString *endpoint = [NSString stringWithFormat:@"/update/check/%@", self.appId];
+    NSString *url = [NSString stringWithFormat:@"%@%@", self.server, endpoint];
     NSDictionary* headers = @{@"Content-Type": @"application/json", @"accept": @"application/json"};
     NSString *uuid = [[NSUserDefaults standardUserDefaults] objectForKey:@"uuid"];
     NSString *app_version = [[self deconstructVersionLabel:self.version_label] firstObject];
